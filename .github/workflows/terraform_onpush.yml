@@ -15,6 +15,7 @@ jobs:
       contents: read
     env:
       TF_CLOUD_ORGANIZATION: ${{ vars.TF_ORGANIZATION }}
+      STAGE: ${{ github.ref_name == 'main' && 'prod' || github.ref_name }}
       TF_VAR_application_stage: ${{ github.ref_name == 'main' && 'prod' || github.ref_name }}
       TF_VAR_aws_region: ${{vars.AWS_REGION}}
       TF_VAR_application_name: ${{ vars.APPLICATION_NAME }}
@@ -26,7 +27,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
@@ -88,6 +88,9 @@ jobs:
         run: |
           export TF_WORKSPACE=${TF_VAR_application_name}-${TF_VAR_application_stage}
           terraform apply -auto-approve -input=false
+
+      - run: npm install -g gatsby-cli
+      - run: npm install
 
       - name: Generate Application Build
         id: gatsby_build

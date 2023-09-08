@@ -5,12 +5,12 @@ provider "aws" {
 }
 
 locals {
-  config       = yamldecode(file("${path.root}/.polymer/.config/${var.application_stage}.env.yml"))
+  config       = yamldecode(file("${path.root}/.polymer/.config/${var.application_stage}.env.yml")).deployment
   s3_origin_id = format("%s-%s-s3originId", var.application_name, var.application_stage)
 }
 
 resource "aws_s3_bucket" "bucket" {
-  bucket = local.config.bucket_name
+  bucket = local.config.target_bucket
   tags = {
     Environment = var.application_stage
   }
@@ -49,7 +49,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   default_cache_behavior {
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = local.s3_origin_id
 
@@ -74,8 +74,26 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
   }
 
+  aliases = lookup(local.config.domain, "aliases", [])
+
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn            = contains(keys(local.config.domain), "viewer_certificate") ? local.config.domain.viewer_certificate : null
+    cloudfront_default_certificate = contains(keys(local.config.domain), "viewer_certificate") ? false : true
+    minimum_protocol_version       = "TLSv1.2_2021"
+    ssl_support_method             = "sni-only"
+  }
+}
+
+resource "aws_route53_record" "www" {
+  for_each = toset(local.config.domain.aliases)
+  zone_id  = local.config.domain.zone_id
+  name     = each.value
+  type     = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.s3_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
+    evaluate_target_health = false
   }
 }
 

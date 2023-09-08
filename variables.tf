@@ -3,7 +3,6 @@ variable "aws_region" {
 }
 
 variable "application_name" {
-  default = "PolymerBase"
 }
 
 variable "application_stage" {

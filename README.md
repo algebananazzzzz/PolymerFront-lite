@@ -39,6 +39,8 @@ Gatsby configuration files are found in .polymer/.gatsbyconfig folder, used to c
 
 2. PolymerFront also integrates with both [TailWindCSS](https://tailwindcss.com) and [Preline](https://preline.co), enhancing your styling capabilities. To add your custom styles, navigate to `src/styles/global.css`.
 
+3. Under gatsby-browser.js, the application is bundled with a dark mode context. This integration enables the application to seamlessly switch between dark and light modes, utilising the ThemeToggler component located at src/components/theme/dark-toggler.js.
+
 
 ## Resources
 
