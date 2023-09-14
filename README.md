@@ -1,101 +1,134 @@
 # PolymerFront-lite
 
-PolymerFront-lite is a Framework dedicated to empower FrontEnd development with React using GatsbyJS. It simplifies the provisioning of frontend Serverless AWS resources using Terraform with CI/CD pipelines. This lite version of PolymerFront is designed for simple static site development, excluding the Amplify and Apollo-Client integration found in the full framework.
+PolymerFront-lite is part of the Polymer framework, a DevOps framework created to provide developers with a framework empowering them to concentrate on what they do best – writing code and developing their applications. This is achieved through these steps:
 
+1. Simplify the configuration process in provisioning resources by utilizing a single concise "Source-of-Truth" in the `stage.env.yml` files.
+2. Establish robust CI/CD pipelines with GitHub Actions for seamless, automated deployments.
+3. Minimize need for constant maintenance by provisioning Serverless AWS resources.
+
+
+## Templates
+Each template is designed with distinct integrations to fulfill specific purposes:
+
+1. [PolymerBase repository](https://github.com/algebananazzzzz/PolymerBase) - for developing Backend resources e.g. GraphQL APIs and Cognito Pools
+3. [PolymerFront repository](https://github.com/algebananazzzzz/PolymerFront) - for creating React applications with GraphQL and Amplify integrations
+4. [PolymerFront-lite repository](https://github.com/algebananazzzzz/PolymerFront-lite) - lite version of PolymerFront
+
+I highly recommend viewing [my blog](https://algebananazzzzz.com/blog/polymer) for a more comprehensive guide.
+maintenance
 
 ## Table of Contents
 
 - [About](#about)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
 - [Configuration](#configuration)
-- [Integrations](#integrations)
-- [Resources](#resources)
-- [Installation](#installation)
+  - [Configuration file locations](#configuration-file-locations)
+  - [Types of Configuration](#types-of-configuration)
+- [Usage](#usage)
+  - [Toggling Dark Mode](#toggling-dark-mode)
 - [Deployment](#deployment)
+  - [Using GitHub Actions](#using-gitHub-actions-(recommended))
+  - [Using Terraform Locally](#using-terraform-locally)
 - [License](#license)
 - [Contact](#contact)
 
+
 ## About
 
-PolymerFront-lite is a member of the Polymer framework family, designed to empower developers in building sophisticated applications. This framework utilizes Terraform for provisioning Serverless resources within the AWS Cloud Infrastructure, while also facilitating the establishment of streamlined CI/CD pipelines through GitHub Actions. For more information about the Polymer framework, please visit the [PolymerBase repository](https://github.com/algebananazzzzz/PolymerBase).
+PolymerFront-lite is a lite version of [PolymerFront](https://github.com/algebananazzzzz/PolymerFront) tailored for creating React applications using Gatsby featuring an **inbuilt dark theme**, suitable for creating simple minimalist websites.
+
+## Getting Started
+
+### Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+  
+1. **Node.js and npm**: To develop and build the project, you need to have Node.js and npm (Node Package Manager) installed.
+
+  - **Node.js**: Download from [the official Node.js website](https://nodejs.org/). We recommend using Node.js version 14.17.0 or higher.
+  - **NPM (Node Package Manager)**: NPM is usually included with Node.js installation. If NPM is not installed, you can download it from the [official npm website](https://www.npmjs.com/).
 
 
-PolymerFront aims to empower frontend development with React. This framework enables developers to bundle React application with GatsbyJS, push content to S3 and subsequently deliver content to consumers via CloudFront. The process is optimized through streamlined CI/CD pipelines, ensuring efficient and reliable deployment.
-
-## Configuration
-
-Please refer to the example configuration file for additional information:
-[Example Configuration File](.polymer/.config/example.{stage}.env.yml)
-
-
-Configuration within PolymerFront-lite consists of Resource Configuration: the setup and customization of the resources that PolymerFront deploys, i.e. CloudFront and S3.
-
-Configuration is stored in YAML files, specific to CI/CD staging environments. General configuration files are located in .polymer/.config and should follow the format {stage}.env.yml (e.g., dev.env.yml for development).
-
-Gatsby configuration files are found in .polymer/.gatsbyconfig folder, used to configure environment variables during bundling (gatsby build) or local development (gatsby develop). It should follow the format {stage}.env.yml (e.g., development.env.yml for development). An example usage: GATSBY_APOLLO_URI = http://localhost:4000
-
-## Integrations
-
-1. PolymerFront utilises the **GatsbyJS framework** to bundle **React** applications into static files for production. Learn more about [GatsbyJS](https://www.gatsbyjs.com). 
-
-2. PolymerFront also integrates with both [TailWindCSS](https://tailwindcss.com) and [Preline](https://preline.co), enhancing your styling capabilities. To add your custom styles, navigate to `src/styles/global.css`.
-
-3. Under gatsby-browser.js, the application is bundled with a dark mode context. This integration enables the application to seamlessly switch between dark and light modes, utilising the ThemeToggler component located at src/components/theme/dark-toggler.js.
-
-
-## Resources
-
-Here are the resources that PolymerFront will deploy, along with instructions on how to configure them:
-
-1. **S3 Source Bucket** to store Frontend Site Content
-
-Under deployment, you can choose the name for S3 bucket to be provisioned
-```yaml
-deployment:
-  target_bucket: polymer-bucket
-```
-
-2. **Cloudfront Distribution** to serve content. This content delivery network (CDN) distributes content to edge locations worldwide, optimizing load times and user experiences.
-
-Under deployment, you can choose the [price class](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PriceClass.html) and domain configuration for Cloudfront
-```yaml
-deployment:
-  cloudfront:
-    price_class: PriceClass_200 # PriceClass_All , PriceClass_200, PriceClass_100
-  domain: # optional
-    zone_id: Z123456789123D
-    aliases:
-      - polymerism.polymer.com
-    viewer_certificate: arn:aws:acm:us-east-1:123456789
-```
-
-## Installation
-
-1. Create a new Gatsby Application with the PolymerFront-lite Framework
-```shell
-gatsby new your_application_name https://github.com/algebananazzzzz/PolymerFront-lite
-```
-
-For instructions on installing Gatsby Client, [read more](https://www.gatsbyjs.com/docs/tutorial/getting-started/part-0/)
+2. **Gatsby CLI**: This project uses Gatsby, so you'll need the Gatsby CLI (Command Line Interface) to manage and build your site. You can install it globally by running:
+  
 ```shell
 npm install -g gatsby-cli
 ```
 
+### Installation
 
-2. Develop your React application
+1. **Create a New Gatsby Project**:
+
+Create a new project with Gatsby-CLI:
+
 ```shell
-cd your_application_name/
+gatsby new MyProject https://github.com/algebananazzzzz/PolymerFront-lite.git
+```
+
+## Configuration
+
+### Configuration file locations
+
+Configuration is stored in YAML files specific to CI/CD staging environments. The configuration files must follow the naming convention `{stage}.env.yml`. For local development (gatsby develop), the configuration is sourced from `.polymer/.gatsbyconfig/development.env.yml` instead:
+
+```
+|-- .polymer
+|   |-- .config
+|   |   |-- dev.env.yml # for dev stage
+|   |   |-- test.env.yml
+|   |   |-- prod.env.yml|   |-- .gatsbyconfig
+|   |   |-- development.env.yml # gatsby develop
+|   |   |-- example.env.yml # example configuration file
+|   |-- .gatsbyconfig
+|   |   |-- development.env.yml # gatsby develop
+|   |   |-- example.env.yml # example configuration file
+|-- other files and directories
+```
+
+Please view the example configuration file for [staging environments](.polymer/.config/example.env.yml) and [local development](.polymer/.gatsbyconfig/example.env.yml) to understand how to configure configuration files. The comments within the file provide detailed explanations of what each field configures.
+
+### Types of Configuration
+
+1. **Resource configuration**: Encompasses settings for CloudFront and S3 origin resources used to make the site available, including domain customization.
+
+2. **Application Configuration**: Includes options for configuring Gatsby environment variables used in your application.
+
+## Usage
+
+To develop Gatsby locally, start the Gatsby development server by running:
+
+```shell
 gatsby develop
+```
+
+### Toggling Dark Mode 
+
+PolymerFront offers a convenient dark mode feature. The dark mode functionality is provided through a context provider located at `src/components/theme/theme-context.js` and a dark mode toggler component found at `src/components/theme/dark-toggler.js`. To toggle dark mode in your application:
+
+
+```jsx
+import React, { useContext } from 'react';
+import { ThemeContext } from '../theme/theme-context';
+import ThemeToggler from '../theme/dark-toggler';
+
+function Page() {
+  const { theme, changeTheme } = useContext(ThemeContext);
+
+  return (
+    <div className="dark:bg-slate-900">
+      <ThemeToggler theme={theme} changeTheme={changeTheme} />
+    </div>
+  );
+}
 ```
 
 ## Deployment
 
-1. **Build Production Sites**
-Execute the following command to build production-ready sites using Gatsby:
-```shell
-gatsby build
-```
+### Using GitHub Actions (Recommended)
 
-2. **Create a GitHub Repository:**
+1. **Create a GitHub Repository:**
 Start by creating a GitHub repository. After that, follow these steps to initialize Git and switch to the `dev` branch:
 ```
 git init
@@ -105,7 +138,7 @@ git checkout -b dev
 git remote set-url origin https://github.com/{your_repository_name}.git
 ```
 
-3. **Configure Secrets and Variables:**
+2. **Configure Secrets and Variables:**
 
 For secure and streamline access to AWS and Terraform Cloud, follow these steps to configure secrets and variables within your GitHub repository:
 
@@ -125,13 +158,82 @@ For secure and streamline access to AWS and Terraform Cloud, follow these steps 
 2. `AWS_REGION`: Define the AWS region you're working with.
 3. `TF_ORGANISATION`: If not already created, create a Terraform Cloud organization for use.
 
-4. **Push to GitHub**
+3. **Push to GitHub**
 ```shell
 git push --set-upstream origin dev
 ```
 
-With GitHub Actions in place, this push will automatically trigger Terraform Cloud to provision the necessary resources.
+With GitHub Actions in place, this push will automatically trigger the following processes:
 
+- Webpack will bundle your Node.js code, optimizing it for production deployment.
+
+- If a workspace for your organization doesn't already exist, Terraform Cloud will create one.Terraform Cloud will then be triggered to provision the necessary resources according to your infrastructure configuration. 
+
+
+4. **Staging**
+
+After a successful deployment of the dev branch, you can extend the same workflow to deploy your application to other stages, such as **test** or **production**. Follow these steps for each stage:
+
+- Create a new branch corresponding to the stage you want to deploy (e.g., `test`, `prod`).
+- Merge the `dev` branch into the newly created stage branch. 
+
+This push to the stage branch will automatically trigger GitHub Actions to provision resources for the specified stage. Repeat these steps for each stage as needed, allowing you to deploy your application to multiple environments seamlessly.
+
+
+### Using Terraform Locally
+
+If you prefer to use Terraform locally and avoid pushing code to GitHub, you can follow these steps. This approach offers several benefits, including greater control and flexibility over your infrastructure provisioning.
+
+1. **Check Terraform Version**:
+
+    After downloading Terraform, verify its version to ensure it's correctly installed:
+
+     ```shell
+     terraform -v
+     ```
+     
+2. **Update terraform.tf Configuration**:
+
+Modify the `terraform.tf` configuration file to specify the required Terraform version under the `required_version` block, and comment out the "cloud" block:
+
+```hcl
+terraform {
+  required_version = "~>1.5.0"
+
+    # cloud {
+    #   workspaces {
+    #     tags = ["github-actions"]
+    #   }
+    # }
+
+  # Other configuration settings...
+}
+```
+
+3. **Specify Staging Environment**:
+
+To define the staging environment you intend to work with, set the `STAGE` variable:
+
+```shell
+export STAGE=dev
+```
+
+4. **Terraform Init, Plan and Apply**:
+
+```shell
+terraform init
+terraform plan
+terraform apply --auto-approve
+```
+
+5. **Gatsby Build and Deploy**
+
+After the necessary resources are deployed, run Gatsby Build to create optimized static assets for your site, then use the npm deploy script to push the assets to Amazon S3 via the gatsby-plugin-s3:
+
+```shell
+gatsby build 
+npm run deploy
+```
 
 ## License
 
